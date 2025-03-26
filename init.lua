@@ -1,3 +1,3 @@
 require("config")
-require("filetypes")
+require("util.filetypes")
 vim.cmd("colorscheme catppuccin-macchiato")
