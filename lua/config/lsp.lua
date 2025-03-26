@@ -21,7 +21,7 @@ return {
     haxe_language_server = {
       cmd = {"node", vim.fs.normalize("~/bin/server.js") },
       root_dir = function() return vim.fn.getcwd() end,
-      name = "haxe",
+      name = "haxe_official",
       filetypes = { "haxe", "hx", ".hx", "hxml", ".hxml" }
     }
   },

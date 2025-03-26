@@ -4,7 +4,7 @@ return {
   event = "InsertEnter",
   build = ":Codeium Auth",
   enabled = function()
-    return vim.fn.executable("codeium") == 1
+    return require("util").get_os() ~= "nixos" or vim.fn.executable("codeium") == 1
   end,
   dependencies = {
         "nvim-lua/plenary.nvim",

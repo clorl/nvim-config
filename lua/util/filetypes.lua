@@ -1,6 +1,6 @@
 local success, ftspec = pcall(require, "config.filetypes")
 
-if not success or not ftspec or type(ftspec) ~= "table" or #ftspec <= 0 then
+if not success or not ftspec or type(ftspec) ~= "table" then
   return
 end
 
@@ -10,12 +10,12 @@ end
 
 local function make_filetype_callback(filetype, callback)
   if callback and type(callback) == "function" then
-    return function(opts)
+    return function()
       default_filetype_callback(filetype)
       _, _ = pcall(callback, opts)
     end
   else
-    return function(opts)
+    return function()
       default_filetype_callback(filetype)
     end
   end
@@ -28,7 +28,7 @@ for key, ft in pairs(ftspec) do
 
   vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
     pattern = ft.pattern,
-    callback = make_filetype_callback(ft.callback),
+    callback = make_filetype_callback(key, ft.callback),
   })
   ::continue::
 end

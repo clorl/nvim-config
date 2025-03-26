@@ -126,21 +126,25 @@ return {
     },
     config = function(opts)
       require("conform").setup(opts)
-      vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
     end
   },
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    main = "nvim-treesitter.configs",
     opts = {
       ensure_installed = {},
       -- TODO: ensure installed
       auto_install = true,
       highlight = {
         enable = true
-      }
-    }
+      },
+      disable = { "haxe", "hxml" }
+    },
+    config = function(opts)
+      require("nvim-treesitter.configs").setup(opts)
+      local parsers = require("nvim-treesitter.parsers")
+      local parser_config = parsers.get_parser_configs()
+    end
   },
   {
     "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
@@ -148,5 +152,5 @@ return {
     config = function()
       --require("lsp_lines").setup()
     end
-  }
+  },
 }
