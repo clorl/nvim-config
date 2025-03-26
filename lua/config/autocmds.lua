@@ -125,3 +125,14 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
   end,
 })
+
+vim.filetype.add({
+    extension = {
+        hx = 'haxe',  -- Replace 'myfiletype' with your desired filetype
+        hxml = "hxml"
+    },
+    pattern = {
+        ['.*%.hx$'] = 'haxe',  -- You can use patterns for more complex matching
+        ['.*%.hxml$'] = 'hxml',  -- You can use patterns for more complex matching
+    },
+})

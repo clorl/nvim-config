@@ -2,7 +2,6 @@ local colorschemes = {
   {
     "catppuccin/nvim",
     name = "catppuccin",
-    opts = {}
   },
 "kvrohit/rasmus.nvim",
 "zenbones-theme/zenbones.nvim",
