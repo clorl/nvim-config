@@ -123,7 +123,7 @@ local lspconfig = {
       callback = function(event2)
         vim.lsp.buf.clear_references()
         vim.diagnostic.hide()
-        vim.codelens.reset()
+        vim.lsp.codelens.clear()
       end,
     })
 
