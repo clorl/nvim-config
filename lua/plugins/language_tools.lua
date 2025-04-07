@@ -1,29 +1,108 @@
-local lsp_utils = require("util.lsp")
+local langs = require("util.languages")
 
-vim.diagnostic.config({
-  virtual_text = true
-})
+vim.g.lsp = {
+  capabilities = vim.lsp.protocol.make_client_capabilities(),
+  on_attach = function(bufnr)
+    require("config.keys").on_attach(bufnr)
+  end
+}
+
+vim.diagnostic.config {
+  severity_sort = true,
+  float = { border = 'rounded', source = 'if_many' },
+  underline = { severity = vim.diagnostic.severity.ERROR },
+  signs = vim.g.have_nerd_font and {
+    text = {
+      [vim.diagnostic.severity.ERROR] = '󰅚 ',
+      [vim.diagnostic.severity.WARN] = '󰀪 ',
+      [vim.diagnostic.severity.INFO] = '󰋽 ',
+      [vim.diagnostic.severity.HINT] = '󰌶 ',
+    },
+  } or {},
+  virtual_text = {
+    source = 'if_many',
+    spacing = 2,
+    format = function(diagnostic)
+      local diagnostic_message = {
+        [vim.diagnostic.severity.ERROR] = diagnostic.message,
+        [vim.diagnostic.severity.WARN] = diagnostic.message,
+        [vim.diagnostic.severity.INFO] = diagnostic.message,
+        [vim.diagnostic.severity.HINT] = diagnostic.message,
+      }
+      return diagnostic_message[diagnostic.severity]
+    end,
+  },
+}
 
 local blink = {
   "saghen/blink.cmp",
   version = "*",
   --priority = 100,
   opts = {
+    keymap = {
+      preset = "super-tab"
+    },
+    completion = {
+      menu = {
+        draw = {
+          components = {
+            kind_icon = {
+              text = function(ctx)
+                local lspkind = require("lspkind")
+                local icon = ctx.kind_icon
+                if vim.tbl_contains({ "Path" }, ctx.source_name) then
+                  local dev_icon, _ = require("nvim-web-devicons").get_icon(ctx.label)
+                  if dev_icon then
+                    icon = dev_icon
+                  end
+                else
+                  icon = require("lspkind").symbolic(ctx.kind, {
+                    mode = "symbol",
+                  })
+                end
+
+                return icon .. ctx.icon_gap
+              end,
+
+              -- Optionally, use the highlight groups from nvim-web-devicons
+              -- You can also add the same function for `kind.highlight` if you want to
+              -- keep the highlight groups in sync with the icons.
+              highlight = function(ctx)
+                local hl = ctx.kind_hl
+                if vim.tbl_contains({ "Path" }, ctx.source_name) then
+                  local dev_icon, dev_hl = require("nvim-web-devicons").get_icon(ctx.label)
+                  if dev_icon then
+                    hl = dev_hl
+                  end
+                end
+                return hl
+              end,
+            }
+          }
+        }
+      }
+    }
   },
-  config = function()
+  enabled = function()
+    return not vim.tbl_contains({ "markdown", "text", "log" }, vim.bo.filetype) and vim.bo.buftype ~= "prompt" and
+    vim.b.completion ~= false
+  end,
+  config = function(_, opts)
     local blink = require("blink.cmp")
-    blink.setup({
-      keymap = { preset = "super-tab" }
-    })
-    lsp_utils.add_capabilities(blink.get_lsp_capabilities())
+    blink.setup(opts)
+    vim.g.capabilties = vim.tbl_deep_extend("force", vim.g.lsp.capabilities, blink.get_lsp_capabilities())
   end,
   dependencies = {
-    "saghen/blink.compat",
-    version = "*",
-    lazy = true,
-    opts = {
-      impersonate_nvim_cmp = true
-    }
+    {
+      "saghen/blink.compat",
+      version = "*",
+      lazy = true,
+      opts = {
+        impersonate_nvim_cmp = true
+      }
+    },
+    "onsails/lspkind.nvim",
+    { "nvim-tree/nvim-web-devicons", opts = {} }
   }
 }
 
@@ -35,29 +114,35 @@ local lspconfig = {
   config = function()
     vim.api.nvim_create_autocmd("LspAttach", {
       callback = function(ev)
-        require("config.keys").lsp()
+        vim.g.lsp.on_attach()
       end
     })
 
-    local config = require("config.lsp")
-    local lspc = require("lspconfig")
-    local capabilities = lsp_utils.capabilities
+    vim.api.nvim_create_autocmd('LspDetach', {
+      group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+      callback = function(event2)
+        vim.lsp.buf.clear_references()
+        vim.diagnostic.hide()
+        vim.codelens.reset()
+      end,
+    })
 
-    -- This sets up servers I have explicitely declared in config.lsp.servers
-    for server_name, server_config in pairs(config.servers) do
-      if server_name ~= "default" then
-        local capabilities = lsp_utils.capabilities
-        if server_config.capabilities and type(server_config.capabilities) == "table" then
-          capabilities = vim.tbl_deep_extend("force", capabilities, server_config.capabilities)
+    vim.api.nvim_create_autocmd("ModeChanged", {
+      pattern = "*:n",
+      callback = function()
+        local client = vim.lsp.get_active_clients({ bufnr = vim.api.nvim_get_current_buf() })[1]
+        if not client then
+          return
         end
-        server_config.capabilities = capabilities
-
-        if config.default then
-          server_config = vim.tbl_deep_extend("force", config.default, server_config)
+        if client.supports_method("textDocument/codeLens") then
+          vim.lsp.codelens.refresh()
         end
-        lspc[server_name].setup(server_config)
+        if client.supports_method("textDocument/diagnostic") then
+          vim.diagnostic.reset()
+          vim.diagnostic.get()
+        end
       end
-    end
+    })
   end
 }
 
@@ -72,30 +157,48 @@ return {
       lspconfig
     },
     enabled = function()
-      return require("util").get_os() ~= "nixos"  -- On NixOS these are installed in another way
+      return require("util").get_os() ~= "nixos" -- On NixOS these are installed in another way
     end,
     config = function()
+      local lspc = require("lspconfig")
       require("mason").setup()
+
+      local ensure_ls = {}
+      for server, _ in pairs(langs.lsp.configs) do
+        table.insert(ensure_ls, server)
+      end
       require("mason-lspconfig").setup({
-        ensure_installed = {}
+        automatic_installation = true,
+        ensure_installed = ensure_ls
       })
       require("mason-nvim-dap").setup({
-        ensure_installed = {}
+        automatic_installation = true,
+        ensure_installed = langs.ensure_installed.dap
       })
       require("mason-tool-installer").setup({
-        ensure_installed = {}
+        ensure_installed = langs.ensure_installed.tools
       })
-      local lsp_configs = require("config.lsp").servers
 
-      -- This sets up servers installed through Mason
       require("mason-lspconfig").setup_handlers({
-        function (server_name)
-          if lsp_configs[server_name] then
-            return
+        function(server_name)
+          if not vim.tbl_contains(vim.tbl_keys(langs.lsp.configs), server_name) then
+            --else
+            lspc[server_name].setup({
+              capabilities = vim.g.lsp.capabilities
+            })
           end
-          require("lspconfig")[server_name].setup(lsp_configs.default and lsp_configs.default or {})
         end
       })
+
+
+      for server_name, config in pairs(langs.lsp.configs) do
+        if config.capabilities then
+          config.capabilities = vim.tbl_deep_extend("force", vim.g.lsp.capabilities, config.capabilities)
+        else
+          config.capabilities = vim.g.lsp.capabilities
+        end
+        lspc[server_name].setup(config)
+      end
     end
   },
   {
@@ -118,11 +221,12 @@ return {
     event = { "BufWritePre" },
     cmd = { "ConformInfo" },
     keys = {
-      { "<leader>cf", function() require("conform").format { async = true, lsp_format = "fallback" } end, { desc = "Format"}}
+      { "<leader>cf", function() require("conform").format({ bufnr = vim.api.nvim_get_current_buf(), async = true, lsp_format =
+        "fallback" }) end, { desc = "Format" } }
     },
     opts = {
       format_on_save = false,
-      formatters_by_ft = require("config.lsp").formatters
+      formatters_by_ft = langs.formatters
     },
     config = function(opts)
       require("conform").setup(opts)
@@ -132,8 +236,7 @@ return {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     opts = {
-      ensure_installed = {},
-      -- TODO: ensure installed
+      ensure_installed = langs.ensure_installed.ts,
       auto_install = true,
       highlight = {
         enable = true
@@ -144,13 +247,6 @@ return {
       require("nvim-treesitter.configs").setup(opts)
       local parsers = require("nvim-treesitter.parsers")
       local parser_config = parsers.get_parser_configs()
-    end
-  },
-  {
-    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
-    enabled = false,
-    config = function()
-      --require("lsp_lines").setup()
     end
   },
 }

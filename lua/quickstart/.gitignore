@@ -1,4 +1,0 @@
-*.log
-build/
-doc/tags
-.luacheckcache

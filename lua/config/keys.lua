@@ -1,5 +1,16 @@
 local M = {}
 local map = vim.keymap.set
+local util = require("util")
+
+map({"n", "v"}, "<M-d>", [["_d]], { desc = "Delete without saving to register" })
+map({ "n", "v" }, "<M-c>", [["_c]], { desc = "Replace without saving to register" })
+map("n", "x", [["_x]], { desc = "Delete char without saving to register" })
+map("n", "Q", "<nop>", { silent = true })
+
+-- Because windows terminal is shit
+if util.get_os() == "windows" then
+  map("n", "<M-v>", "<cmd>norm <C-v><cr>", { silent = true })
+end
 
 -- better up/down
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
@@ -50,7 +61,7 @@ map("n", ">", ">>")
 map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
 -- location list
-map("n", "<leader>xl", function()
+map("n", "<S-F2>", function()
   local success, err = pcall(vim.fn.getloclist(0, { winid = 0 }).winid ~= 0 and vim.cmd.lclose or vim.cmd.lopen)
   if not success and err then
     vim.notify(err, vim.log.levels.ERROR)
@@ -58,7 +69,7 @@ map("n", "<leader>xl", function()
 end, { desc = "Location List" })
 
 -- quickfix list
-map("n", "<leader>xq", function()
+map("n", "<F2>", function()
   local success, err = pcall(vim.fn.getqflist({ winid = 0 }).winid ~= 0 and vim.cmd.cclose or vim.cmd.copen)
   if not success and err then
     vim.notify(err, vim.log.levels.ERROR)
@@ -76,7 +87,7 @@ local diagnostic_goto = function(next, severity)
     go({ severity = severity })
   end
 end
-map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+map("n", "<leader>xl", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
 map("n", "]d", diagnostic_goto(true), { desc = "Next Diagnostic" })
 map("n", "[d", diagnostic_goto(false), { desc = "Prev Diagnostic" })
 map("n", "]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
@@ -89,18 +100,30 @@ map("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
 -- Terminal Mappings
 map("t", "<esc>", "<c-x><c-\\>", { desc = "which_key_ignore" })
 
-function M.lsp()
-  map("n", "gd", vim.lsp.buf.definition, { desc = "Goto Definition" })
-  map("n", "gr", vim.lsp.buf.references, { desc = "References" })
-  map("n", "gI", vim.lsp.buf.implementation, { desc = "Goto Implementation" })
-  map("n", "gy", vim.lsp.buf.type_definition, { desc = "Goto Type Definition" })
-  map("n", "gD", vim.lsp.buf.declaration, { desc = "Goto Declaration" })
-  map("n", "K", function() return vim.lsp.buf.hover() end, { desc = "Show Documentation" })
-  map({"n", "i"}, "<c-k>", function() return vim.lsp.buf.sinature_help() end, { desc = "Signature Help"})
-  map({"n", "v"}, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Actions" })
-  -- map({"n", "v"}, "<leader>cc", vim.lsp.buf.codelens.run, { desc = "Codelens" })
-  -- map({"n", "v"}, "<leader>cC", vim.lsp.buf.codelens.refresh, { desc = "Refresh Codelens" })
-  map({"n", "v"}, "<leader>cr", vim.lsp.buf.rename, { desc = "Rename" })
+function M.on_attach(bufnr)
+  if Snacks and Snacks.picker then
+    map("n","gd", function() Snacks.picker.lsp_definitions() end, {  desc = "Goto Definition" })
+    map("n","gD", function() Snacks.picker.lsp_declarations() end, {  desc = "Goto Declaration" })
+    map("n","gr", function() Snacks.picker.lsp_references() end, {  nowait = true, desc = "References" })
+    map("n","gI", function() Snacks.picker.lsp_implementations() end, {  desc = "Goto Implementation" })
+    map("n","gy", function() Snacks.picker.lsp_type_definitions() end, {  desc = "Goto T[y]pe Definition" })
+    map("n","<leader>ss", function() Snacks.picker.lsp_symbols() end, {  desc = "LSP Symbols" })
+    map("n","<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, {  desc = "LSP Workspace Symbols" })
+  else
+    map("n", "gd", vim.lsp.buf.definition, { desc = "Goto Definition" })
+    map("n", "gr", vim.lsp.buf.references, { desc = "References" })
+    map("n", "gI", vim.lsp.buf.implementation, { desc = "Goto Implementation" })
+    map("n", "gy", vim.lsp.buf.type_definition, { desc = "Goto Type Definition" })
+    map("n", "gD", vim.lsp.buf.declaration, { desc = "Goto Declaration" })
+  end
+    map("n","gc", function() vim.lsp.buf.incoming_calls() end, {  desc = "Incoming Calls" })
+    map("n","gC", function() vim.lsp.buf.incoming_calls() end, {  desc = "Outgoing Calls" })
+    map("n", "K", function() vim.lsp.buf.hover() end, { desc = "Show Documentation" })
+    map({"n", "i", "v"}, "<leader>ca", function() vim.lsp.buf.code_action() end, { desc = "Code Actions" })
+    map("n", "<leader>cr", function() vim.lsp.buf.rename() end, { desc = "Rename Symbol"})
+    map("i", "<M-Space>", function() vim.lsp.buf.completion({}) end, { desc = "Request Completion"})
+    map({"n", "v"}, "<leader>cc", function() vim.lsp.codelens.run() end, { desc = "Codelens" })
+    map({"n", "v"}, "<leader>cC", function() vim.lsp.codelens.refresh() end, { desc = "Refresh Codelens" })
 end
 
 return M

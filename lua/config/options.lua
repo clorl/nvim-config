@@ -60,3 +60,4 @@ opt.smoothscroll = false
 --opt.foldexpr = "v:lua.require'lazyvim.util'.ui.foldexpr()"
 opt.foldmethod = "manual"
 opt.foldtext = ""
+opt.exrc = true
