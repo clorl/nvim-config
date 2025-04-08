@@ -138,8 +138,10 @@ local lspconfig = {
           vim.lsp.codelens.refresh()
         end
         if client.supports_method("textDocument/diagnostic") then
-          vim.diagnostic.reset()
-          vim.diagnostic.get()
+          vim.schedule(function()
+            vim.diagnostic.reset()
+            vim.diagnostic.get()
+          end)
         end
       end
     })
@@ -226,9 +228,16 @@ return {
     },
     opts = {
       format_on_save = false,
-      formatters_by_ft = langs.formatters
+      formatters_by_ft = langs.formatters,
+      formatters = {
+        haxe_formatter = require("languages.haxe").custom_formatters.haxe_formatter
+      }
     },
     config = function(opts)
+      if not opts.formatters_by_ft then
+        opts.formatters_by_ft = {}
+      end
+      opts.formatters_by_ft.haxe = { "haxe_formatter" }
       require("conform").setup(opts)
     end
   },
@@ -241,12 +250,12 @@ return {
       highlight = {
         enable = true
       },
-      disable = { "haxe", "hxml" }
     },
     config = function(opts)
       require("nvim-treesitter.configs").setup(opts)
       local parsers = require("nvim-treesitter.parsers")
-      local parser_config = parsers.get_parser_configs()
+      local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+      vim.treesitter.language.register("typescript", "haxe")
     end
-  },
+  }
 }
