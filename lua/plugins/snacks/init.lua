@@ -48,7 +48,7 @@ return {
       { "<leader>fg", function() Snacks.picker.grep() end, { desc = "Grep" }},
       { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, { desc = "Find Config" }},
       --{ "<leader>fG", function() Snacks.picker.git_files() end, { desc = "Git Files" }},
-      --{ "<c-p>", function() Snacks.picker.commands({ preview = none }) end, { desc = "Command Palette"} },
+      -- "<c-p>", function() Snacks.picker.commands({ preview = none }) end, { desc = "Command Palette"} },
       { "<leader>sh", function() Snacks.picker.help() end, { desc = "Find Help"} },
       { "<leader>si", function() Snacks.picker.icons() end, { desc = "Icons"} },
       { "<leader>sj", function() Snacks.picker.jumps() end, { desc = "Jumps"} },
