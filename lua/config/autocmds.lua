@@ -9,8 +9,26 @@ vim.api.nvim_create_autocmd("TermOpen", {
     vim.wo.number = false
     vim.wo.relativenumber = false
     vim.wo.cursorline = false
-    vim.cmd("startinsert")
+    --vim.cmd("startinsert")
   end
+})
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function(args)
+    local bufnr = args.buf
+    if vim.bo[bufnr].buftype == "terminal" then
+      vim.cmd("startinsert")
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufLeave", {
+  callback = function(args)
+    local bufnr = args.buf
+    if vim.bo[bufnr].buftype == "terminal" and vim.api.nvim_get_mode().mode == "i" then
+      vim.cmd("normal!")
+    end
+  end,
 })
 
 -- Check if we need to reload the file when it changed

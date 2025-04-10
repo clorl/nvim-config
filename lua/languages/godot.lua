@@ -23,7 +23,7 @@ return {
     gdshader_lsp = {}
   },
   formatters = {
-    gdscript = { "gdtoolkit" }
+    --gdscript = { "gdtoolkit" }
   },
   dap = {},
   ts = { "gdscript", "gdshader" },

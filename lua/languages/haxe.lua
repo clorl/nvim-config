@@ -3,14 +3,21 @@ vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
   pattern = {"*.hx", "*.hxml"},
   callback = function()
     vim.bo.filetype = "haxe"
+    vim.cmd("TSEnable highlight")
   end,
 })
 
 return {
   lsp = {
     haxe_language_server = {
+      filetypes = { "haxe", "hxml" },
       cmd = { "node", vim.fs.normalize("~/bin/server.js") },
-      root_dir = vim.fs.root(0, {  "common.hxml", "wartales.hxml" })
+      root_dir = vim.fs.root(0, {  "common.hxml", "wartales.hxml" }),
+      settings = {
+        haxe = {
+          executable = "haxe"
+        }
+      }
     }
   },
   formatters = {

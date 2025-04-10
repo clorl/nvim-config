@@ -31,12 +31,13 @@ map("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease Window Wi
 map("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase Window Width" })
 
 -- Move Lines
-map("n", "<A-j>", "<cmd>execute 'move .+' . v:count1<cr>==", { desc = "Move Down" })
-map("n", "<A-k>", "<cmd>execute 'move .-' . (v:count1 + 1)<cr>==", { desc = "Move Up" })
+map("n", "<leader>j", "j", { desc = "Join lines" })
+map("n", "J", "<cmd>execute 'move .+' . v:count1<cr>==", { desc = "Move Down" })
+map("n", "K", "<cmd>execute 'move .-' . (v:count1 + 1)<cr>==", { desc = "Move Up" })
 map("i", "<A-j>", "<esc><cmd>m .+1<cr>==gi", { desc = "Move Down" })
 map("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move Up" })
-map("v", "<A-j>", ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = "Move Down" })
-map("v", "<A-k>", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = "Move Up" })
+map("v", "J", ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = "Move Down" })
+map("v", "J", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = "Move Up" })
 
 -- buffers
 map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
@@ -49,7 +50,7 @@ map({ "i", "n", "s" }, "<esc>", function()
 end, { expr = true, desc = "Escape and Clear hlsearch" })
 
 --keywordprg
-map("n", "<leader>K", "<cmd>norm! K<cr>", { desc = "Keywordprg" })
+--map("n", "<leader>K", "<cmd>norm! K<cr>", { desc = "Keywordprg" })
 
 -- better indenting
 map("v", "<", "<gv")
@@ -61,7 +62,7 @@ map("n", ">", ">>")
 map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
 -- location list
-map("n", "<S-F2>", function()
+map("n", "<leader>xl", function()
   local success, err = pcall(vim.fn.getloclist(0, { winid = 0 }).winid ~= 0 and vim.cmd.lclose or vim.cmd.lopen)
   if not success and err then
     vim.notify(err, vim.log.levels.ERROR)
@@ -69,7 +70,7 @@ map("n", "<S-F2>", function()
 end, { desc = "Location List" })
 
 -- quickfix list
-map("n", "<F2>", function()
+map("n", "<leader>xX", function()
   local success, err = pcall(vim.fn.getqflist({ winid = 0 }).winid ~= 0 and vim.cmd.cclose or vim.cmd.copen)
   if not success and err then
     vim.notify(err, vim.log.levels.ERROR)
@@ -120,7 +121,7 @@ function M.on_attach(bufnr)
     map("n","gC", function() vim.lsp.buf.incoming_calls() end, {  desc = "Outgoing Calls" })
     map("n", "K", function() vim.lsp.buf.hover() end, { desc = "Show Documentation" })
     map({"n", "v"}, "<leader>ca", function() vim.lsp.buf.code_action() end, { desc = "Code Actions" })
-    map("n", "<leader>cr", function() vim.lsp.buf.rename() end, { desc = "Rename Symbol"})
+    map("n", "<leader>cR", function() vim.lsp.buf.rename() end, { desc = "Rename Symbol"})
     map("i", "<M-Space>", function() vim.lsp.buf.completion({}) end, { desc = "Request Completion"})
     map({"n", "v"}, "<leader>cc", function() vim.lsp.codelens.run() end, { desc = "Codelens" })
     map({"n", "v"}, "<leader>cC", function() vim.lsp.codelens.refresh() end, { desc = "Refresh Codelens" })

@@ -5,7 +5,6 @@ local custom_pickers = {}
 return {
   {
     "folke/snacks.nvim",
-    priority = 1000,
     lazy = false,
     opts = {
       bigfile = { enabled = true },
@@ -48,15 +47,13 @@ return {
       { "<leader>ff", function() Snacks.picker.smart() end, { desc = "Find Files" }},
       { "<leader>fg", function() Snacks.picker.grep() end, { desc = "Grep" }},
       { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, { desc = "Find Config" }},
-      { "<leader>fG", function() Snacks.picker.git_files() end, { desc = "Git Files" }},
-      { "<c-p>", function() Snacks.picker.commands({ preview = none }) end, { desc = "Command Palette"} },
+      --{ "<leader>fG", function() Snacks.picker.git_files() end, { desc = "Git Files" }},
+      --{ "<c-p>", function() Snacks.picker.commands({ preview = none }) end, { desc = "Command Palette"} },
       { "<leader>sh", function() Snacks.picker.help() end, { desc = "Find Help"} },
-      { "<leader>sx", function() Snacks.picker.diagnostics() end, { desc = "Diagnostics"} },
-      { "<leader>sX", function() Snacks.picker.diagnostics_buffer() end, { desc = "Diagnostics Buffer"} },
       { "<leader>si", function() Snacks.picker.icons() end, { desc = "Icons"} },
       { "<leader>sj", function() Snacks.picker.jumps() end, { desc = "Jumps"} },
       { "<leader>sp", function() Snacks.picker.lazy() end, { desc = "Plugins"} },
       { "<leader><space>", function() Snacks.picker.resume() end, { desc = "Last Picker"} },
-    }
+    },
   },
 }

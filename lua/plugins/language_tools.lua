@@ -37,7 +37,7 @@ vim.diagnostic.config {
 local blink = {
   "saghen/blink.cmp",
   version = "*",
-  --priority = 100,
+  priority = 51,
   opts = {
     keymap = {
       preset = "super-tab"

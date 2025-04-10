@@ -34,7 +34,7 @@ local colorschemes = {
 --
 
 local default_spec = {
-  priority = 999,
+  priority = 52,
   lazy = true,
 }
 

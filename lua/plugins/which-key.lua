@@ -1,6 +1,7 @@
 return {
     "folke/which-key.nvim",
     event = "VeryLazy",
+    priority = 52,
     opts_extend = { "spec" },
     opts = {
       preset = "helix",
@@ -13,6 +14,7 @@ return {
           { "<leader>f", group = "file/find" },
           { "<leader>g", group = "git" },
           { "<leader>q", group = "quit/session" },
+          { "<leader>r", group = "run code" },
           { "<leader>s", group = "search" },
           { "<leader>u", group = "ui", icon = { icon = "󰙵 ", color = "cyan" } },
           { "<leader>x", group = "diagnostics/quickfix", icon = { icon = "󱖫 ", color = "green" } },
@@ -23,6 +25,23 @@ return {
           { "z", group = "fold" },
           -- better descriptions
           { "gx", desc = "Open with system app" },
+          { "<leader>cf", desc = "Format code" },
+
+          -- Snacks descriptions
+          { "<leader>n", desc = "Show Notifications"},
+          { "<leader>ff", desc = "Find Files" },
+          { "<leader>fg", desc = "Grep" },
+          { "<leader>fc", desc = "Files in Config" },
+          { "<c-p>", desc = "Command Palette (wip)" },
+          { "<leader>cr", desc = "Run Code" },
+          { "<leader>cn", desc = "New run task" },
+          { "<leader>cA", desc = "Action on run task" },
+          { "<leader>ce", desc = "Edit run task" },
+          { "<leader>sh", desc = "Find Help" },
+          { "<leader>si", desc = "Icons" },
+          { "<leader>sj", desc = "Jumps" },
+          { "<leader>sp", desc = "Plugins" },
+          { "<leader><space>", desc = "Last Picker" },
         },
       },
     },
@@ -33,13 +52,6 @@ return {
           require("which-key").show({ global = false })
         end,
         desc = "Buffer Keymaps (which-key)",
-      },
-      {
-        "<c-w><space>",
-        function()
-          require("which-key").show({ keys = "<c-w>", loop = true })
-        end,
-        desc = "Window Hydra Mode (which-key)",
       },
     },
     config = function(_, opts)
