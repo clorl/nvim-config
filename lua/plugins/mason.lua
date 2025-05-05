@@ -19,8 +19,6 @@ return {
     --   opts.ensure_installed = {}
     -- end
 
-    vim.print(opts)
-
     require("mason-tool-installer").setup({ensure_installed = opts.ensure_installed})
     require("mason-lspconfig").setup {
       ensure_installed = {},
