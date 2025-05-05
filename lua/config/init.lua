@@ -1,4 +1,4 @@
-require("util.languages").setup("languages")
+require("util").make_globals()
 
 require("config.options")
 require("config.lazy")

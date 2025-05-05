@@ -133,4 +133,25 @@ function M.is_valid(value, t, allow_default, func)
   return func_result
 end
 
+
+function M.make_globals()
+  --- Creates a default plugin spec for language plugins
+  _G.Lang = function (spec)
+    if spec == nil then
+      spec = {}
+    end
+
+    local new_spec = {}
+
+    for key, val in pairs(spec) do
+      table.insert(new_spec, {
+        key,
+        opts = val
+      })
+    end
+
+    return new_spec
+  end
+end
+
 return M
