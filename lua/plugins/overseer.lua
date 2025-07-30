@@ -1,5 +1,6 @@
 return {
   'stevearc/overseer.nvim',
+  lazy = false,
   opts = {
     strategy = "jobstart",
     component_aliases = {

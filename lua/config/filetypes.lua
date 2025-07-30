@@ -1,5 +1,5 @@
 return {
-  haxe = {
+  ts = {
     pattern = {"*.hx"}
   },
   hxml = {
