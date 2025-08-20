@@ -1,5 +1,6 @@
 return {
   'mrjones2014/legendary.nvim',
+  enabled = false,
   version = 'v2.13.9',
   priority = 53,
   lazy = false,

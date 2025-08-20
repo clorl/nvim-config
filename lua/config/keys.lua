@@ -2,6 +2,20 @@ local M = {}
 local map = vim.keymap.set
 local util = require("util")
 
+map({"n"}, "<C-x>", "<cmd>bd<cr>")
+vim.keymap.set('n', '<C-S-x>', function()
+  local buffers = vim.fn.getbufinfo({ buflisted = 1 })
+
+  if #buffers == 1 then
+    vim.notify('Cannot close the last buffer.', vim.log.levels.INFO)
+    return
+  end
+
+  for _, buf in ipairs(buffers) do
+    vim.cmd('bd ' .. buf.bufnr)
+  end
+end, { desc = 'Delete all buffers' })
+
 map({"n", "v"}, "<M-d>", [["_d]], { desc = "Delete without saving to register" })
 map({ "n", "v" }, "<M-c>", [["_c]], { desc = "Replace without saving to register" })
 map("n", "x", [["_x]], { desc = "Delete char without saving to register" })
@@ -9,7 +23,7 @@ map("n", "Q", "<nop>", { silent = true })
 
 -- Because windows terminal is shit
 if util.get_os() == "windows" then
-  map("n", "<M-v>", "<cmd>norm <C-v><cr>", { silent = true })
+  map("v", "<S-v>", "<cmd>norm <C-v><cr>", { silent = true })
 end
 
 -- better up/down

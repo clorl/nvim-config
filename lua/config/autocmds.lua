@@ -3,6 +3,16 @@ local function augroup(name)
   return vim.api.nvim_create_augroup("user_" .. name, { clear = true })
 end
 
+vim.api.nvim_create_autocmd("VimEnter", {
+  pattern = "*",
+  callback = function(ev)
+    local local_config_path = vim.fs.joinpath(vim.fn.getcwd(), ".nvim.lua")
+    if vim.fn.filereadable(local_config_path) then
+      pcall(require, local_config_path)
+    end
+  end
+})
+
 vim.api.nvim_create_autocmd("TermOpen", {
   pattern = "*",
   callback = function()
@@ -154,11 +164,6 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 
 vim.filetype.add({
     extension = {
-        hx = 'haxe',  -- Replace 'myfiletype' with your desired filetype
-        hxml = "hxml"
-    },
-    pattern = {
-        ['.*%.hx$'] = 'haxe',  -- You can use patterns for more complex matching
-        ['.*%.hxml$'] = 'hxml',  -- You can use patterns for more complex matching
+        hx = 'ts',  -- Replace 'myfiletype' with your desired filetype
     },
 })

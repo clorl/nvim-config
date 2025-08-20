@@ -2,23 +2,38 @@ return {
   'stevearc/overseer.nvim',
   lazy = false,
   opts = {
-    strategy = "jobstart",
+    default_detail = 1,
     component_aliases = {
       default = {
         "on_exit_set_status",
-        "on_output_quickfix",
-        { "display_duration", detail_level = 1 },
-        { "on_complete_notify" },
+        { "open_output", direction = "dock", on_start = "always"},
+        "on_result_diagnostics"
       }
+    },
+    task_list = {
+      separator = ""
     }
   },
   keys = {
-    { "<S-F5>", "<cmd>OverseerToggle right<cr>" },
-    { "<F5>", "<cmd>OverseerRun<cr>" },
-    { "<C-F5>", "<cmd>OverseerQuickAction<cr>" },
-    { "<leader>cr", "<cmd>OverseerRun<cr>", { desc = "Run Code" }},
-    { "<leader>cn", "<cmd>OverseerBuild<cr>", { desc = "New run task" }},
-    { "<leader>cA", "<cmd>OverseerTaskAction<cr>", { desc = "Action on run task" }},
-    { "<leader>ce", "<cmd>OverseerTaskAction<cr>", { desc = "Edit run task" }},
+    { "<F5>", "<cmd>OverseerRun<cr>", { desc = "Run code" }},
+    { "<leader><r>", "<cmd>OverseerToggle<cr>", { desc = "Run panel" } },
+    { "<S-F5>", "<cmd>OverseerTaskAction<cr>", { desc = "Action on run task" }},
   }
 }
+
+-- exrc template
+-- require("overseer").register_template({
+--   name = "My project task",
+--   params = {},
+--   condition = {
+--     -- This makes the template only available in the current directory
+--     -- In case you :cd out later
+--     dir = vim.fn.getcwd(),
+--   },
+--   builder = function()
+--     return {
+--       cmd = {"echo"},
+--       args = {"Hello", "world"},
+--     }
+--   end,
+-- })

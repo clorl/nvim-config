@@ -11,7 +11,8 @@
         ["<bs>"] = "actions.parent",
         ["<s-h>"] = "actions.toggle_hidden",
         ["<s-bs>"] = "actions.open_cwd",
-        ["<s-enter>"] = "actions.cd"
+        ["<s-enter>"] = "actions.cd",
+        ["<c-p>"] = ""
       }
     },
   }
