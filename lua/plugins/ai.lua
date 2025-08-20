@@ -12,7 +12,7 @@ return {
       virtual_text = {
         enabled = true,
         key_bindings = {
-          accept = "<C-enter>", -- handled by nvim-cmp / blink.cmp
+          accept = "<C-S-y>", -- handled by nvim-cmp / blink.cmp
           next = "<M-]>",
           prev = "<M-[>",
         },

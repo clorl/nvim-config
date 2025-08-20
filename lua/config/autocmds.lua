@@ -7,8 +7,9 @@ vim.api.nvim_create_autocmd("VimEnter", {
   pattern = "*",
   callback = function(ev)
     local local_config_path = vim.fs.joinpath(vim.fn.getcwd(), ".nvim.lua")
+    print(local_config_path)
     if vim.fn.filereadable(local_config_path) then
-      pcall(require, local_config_path)
+      vim.cmd("so " .. local_config_path)
     end
   end
 })
