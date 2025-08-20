@@ -1,23 +1,22 @@
 return {
-  "Exafunction/codeium.nvim",
+  "Exafunction/windsurf.nvim",
   cmd = "Codeium",
   event = "InsertEnter",
   build = ":Codeium Auth",
-  enabled = function()
-    return vim.fn.executable("codeium") == 1
-  end,
   dependencies = {
-        "nvim-lua/plenary.nvim",
+    "nvim-lua/plenary.nvim",
   },
-  opts = {
-    enable_cmp_source = true,
-    virtual_text = {
-      enabled = true,
-      key_bindings = {
-        accept = "<C-enter>", -- handled by nvim-cmp / blink.cmp
-        next = "<M-]>",
-        prev = "<M-[>",
+  config = function()
+    require("codeium").setup({
+      enable_cmp_source = true,
+      virtual_text = {
+        enabled = true,
+        key_bindings = {
+          accept = "<C-enter>", -- handled by nvim-cmp / blink.cmp
+          next = "<M-]>",
+          prev = "<M-[>",
+        },
       },
-    },
-  },
+    })
+  end
 }

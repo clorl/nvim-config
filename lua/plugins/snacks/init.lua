@@ -53,7 +53,11 @@ return {
           filename_first = true,
         },
         layout = {
-          preset = "vscode",
+          preset = "sidebar",
+          layout = {
+            position = "right",
+            width = 0.3,
+          }
         },
         frecency = true,
         file = {
@@ -75,7 +79,7 @@ return {
         current = false,
         focus = "list",
         win = {
-          input = {
+          list = {
             keys = {
               ["<Tab>"] = { "list_down", mode = { "n", "i" } },
               ["<S-Tab>"] = { "list_up", mode = { "n", "i" } },
