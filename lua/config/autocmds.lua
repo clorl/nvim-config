@@ -7,11 +7,11 @@ vim.api.nvim_create_autocmd("VimEnter", {
   pattern = "*",
   callback = function(ev)
     local local_config_path = vim.fs.joinpath(vim.fn.getcwd(), ".nvim.lua")
-    print(local_config_path)
-    if vim.fn.filereadable(local_config_path) then
-      vim.cmd("so " .. local_config_path)
+    if vim.fn.filereadable(local_config_path) == 1 then
+      vim.notify("Sourcing " .. local_config_path, vim.log.levels.INFO)
+      vim.cmd("source " .. local_config_path)
     end
-  end
+  end,
 })
 
 vim.api.nvim_create_autocmd("TermOpen", {

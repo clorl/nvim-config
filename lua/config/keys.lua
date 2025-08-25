@@ -113,7 +113,15 @@ map("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
 -- stylua: ignore start
 
 -- Terminal Mappings
-map("t", "<esc>", "<c-x><c-\\>", { desc = "which_key_ignore" })
+map("t", "<esc>", "<c-\\><c-n>", { noremap = true, silent = true, desc = "which_key_ignore" })
+map("t", "<c-w>", "<cmd>stopinsert<cr><c-w>", { noremap = true, silent = true, desc = "which_key_ignore" })
+
+
+-- Automatically enter normal mode when switching to a terminal buffer
+vim.api.nvim_create_autocmd({ "BufWinEnter", "WinEnter" }, {
+    pattern = { "term://*" },
+    command = "startinsert",
+})
 
 function M.on_attach(bufnr)
   if Snacks and Snacks.picker then

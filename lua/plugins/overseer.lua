@@ -16,8 +16,7 @@ return {
   },
   keys = {
     { "<F5>", "<cmd>OverseerRun<cr>", { desc = "Run code" }},
-    { "<leader><r>", "<cmd>OverseerToggle<cr>", { desc = "Run panel" } },
-    { "<S-F5>", "<cmd>OverseerTaskAction<cr>", { desc = "Action on run task" }},
+    { "<S-F5>", "<cmd>OverseerToggle<cr>", { desc = "Action on run task" }},
   }
 }
 
