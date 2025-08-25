@@ -15,9 +15,11 @@ return {
     }
   },
   keys = {
-    { "<F5>", "<cmd>OverseerRun<cr>", { desc = "Run code" }},
-    { "<S-F5>", "<cmd>OverseerToggle<cr>", { desc = "Action on run task" }},
-  }
+    { "<F5>", "<cmd>OverseerRun<cr>", desc = "Run code"},
+    { "<S-F5>", "<cmd>OverseerQuickAction<cr>",  desc = "Action on run task" },
+    { "<leader>r", "<cmd>OverseerQuickAction<cr>",  desc = "Toggle Overseer Menu" },
+  
+}
 }
 
 -- exrc template

@@ -16,7 +16,7 @@ return {
 			function()
 				require("conform").format({ async = true })
 			end,
-			{ desc = "Code Format" },
+			desc = "Code Format",
 		},
 	},
 }
