@@ -61,3 +61,8 @@ opt.smoothscroll = false
 opt.foldmethod = "manual"
 opt.foldtext = ""
 opt.exrc = false
+opt.diffopt = {
+	"horizontal",
+	"iwhite"
+}
+vim.opt.winborder = "rounded"

@@ -10,7 +10,7 @@ map("n", "Q", "<nop>", { silent = true })
 
 -- Because windows terminal is shit
 if util.get_os() == "windows" then
-  map("v", "<S-v>", "<cmd>norm <C-v><cr>", { silent = true })
+	map("v", "V", "<cmd>norm <C-v><cr>", { silent = true })
 end
 
 -- better up/down
@@ -62,22 +62,6 @@ map("n", ">", ">>")
 -- lazy
 map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
--- location list
-map("n", "<leader>xl", function()
-  local success, err = pcall(vim.fn.getloclist(0, { winid = 0 }).winid ~= 0 and vim.cmd.lclose or vim.cmd.lopen)
-  if not success and err then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
-end, { desc = "Location List" })
-
--- quickfix list
-map("n", "<leader>xX", function()
-  local success, err = pcall(vim.fn.getqflist({ winid = 0 }).winid ~= 0 and vim.cmd.cclose or vim.cmd.copen)
-  if not success and err then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
-end, { desc = "Quickfix List" })
-
 map("n", "[q", vim.cmd.cprev, { desc = "Previous Quickfix" })
 map("n", "]q", vim.cmd.cnext, { desc = "Next Quickfix" })
 
@@ -89,7 +73,7 @@ local diagnostic_goto = function(next, severity)
     go({ severity = severity })
   end
 end
-map("n", "<leader>xl", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+map("n", "<leader>w", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
 map("n", "]d", diagnostic_goto(true), { desc = "Next Diagnostic" })
 map("n", "[d", diagnostic_goto(false), { desc = "Prev Diagnostic" })
 map("n", "]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
@@ -104,36 +88,7 @@ map("t", "<esc>", "<c-\\><c-n>", { noremap = true, silent = true, desc = "which_
 map("t", "<c-w>", "<cmd>stopinsert<cr><c-w>", { noremap = true, silent = true, desc = "which_key_ignore" })
 
 
--- Automatically enter normal mode when switching to a terminal buffer
-vim.api.nvim_create_autocmd({ "BufWinEnter", "WinEnter" }, {
-    pattern = { "term://*" },
-    command = "startinsert",
-})
-
 function M.on_attach(bufnr)
-  if Snacks and Snacks.picker then
-    map("n","gd", function() Snacks.picker.lsp_definitions() end, {  desc = "Goto Definition" })
-    map("n","gD", function() Snacks.picker.lsp_declarations() end, {  desc = "Goto Declaration" })
-    map("n","gr", function() Snacks.picker.lsp_references() end, {  nowait = true, desc = "References" })
-    map("n","gI", function() Snacks.picker.lsp_implementations() end, {  desc = "Goto Implementation" })
-    map("n","gy", function() Snacks.picker.lsp_type_definitions() end, {  desc = "Goto T[y]pe Definition" })
-    map("n","<leader>ss", function() Snacks.picker.lsp_symbols() end, {  desc = "LSP Symbols" })
-    map("n","<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, {  desc = "LSP Workspace Symbols" })
-  else
-    map("n", "gd", vim.lsp.buf.definition, { desc = "Goto Definition" })
-    map("n", "gr", vim.lsp.buf.references, { desc = "References" })
-    map("n", "gI", vim.lsp.buf.implementation, { desc = "Goto Implementation" })
-    map("n", "gy", vim.lsp.buf.type_definition, { desc = "Goto Type Definition" })
-    map("n", "gD", vim.lsp.buf.declaration, { desc = "Goto Declaration" })
-  end
-    map("n","gc", function() vim.lsp.buf.incoming_calls() end, {  desc = "Incoming Calls" })
-    map("n","gC", function() vim.lsp.buf.incoming_calls() end, {  desc = "Outgoing Calls" })
-    map("n", "K", function() vim.lsp.buf.hover() end, { desc = "Show Documentation" })
-    map({"n", "v"}, "<leader>ca", function() vim.lsp.buf.code_action() end, { desc = "Code Actions" })
-    map("n", "<leader>cR", function() vim.lsp.buf.rename() end, { desc = "Rename Symbol"})
-    map("i", "<M-Space>", function() vim.lsp.buf.completion({}) end, { desc = "Request Completion"})
-    map({"n", "v"}, "<leader>cc", function() vim.lsp.codelens.run() end, { desc = "Codelens" })
-    map({"n", "v"}, "<leader>cC", function() vim.lsp.codelens.refresh() end, { desc = "Refresh Codelens" })
 end
 
 return M

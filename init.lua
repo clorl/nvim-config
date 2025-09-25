@@ -1,2 +1,5 @@
-require("config")
-vim.cmd("colorscheme catppuccin-macchiato")
+require("commands")
+require("options")
+require("keys")
+require("plugins")
+require("lsp")
