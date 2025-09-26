@@ -45,7 +45,10 @@ require("snacks").setup {
 	bufdelete = { enabled = true },
 	indent = { enabled = true },
 	input = { enabled = true },
-	notifier = { enabled = true },
+	notifier = { 
+		enabled = true,
+		style = "minimal",
+	},
 	toggle = { enabled = true },
 	styles = {
 		notification_history = {
@@ -87,8 +90,11 @@ require("snacks").setup {
 	}
 }
 
+
+-- Pickers
+
 map({"n", "v", "i"}, "<C-x>", function() Snacks.bufdelete() end, { desc = "Delete Buffer"})
-map({"n", "v"}, "<leader>n", function() Snacks.notifier.show_history() end, { desc = "Notifications"})
+map({"n", "v"}, "<leader>n", function() Snacks.picker.notifications() end, { desc = "Notifications"})
 map({"n", "v"}, "<Tab>", function() Snacks.picker.buffers(pickers.buffers) end, { desc = "Pick Buffers"})
 map({"n", "v"}, "<leader>f", function() Snacks.picker.smart() end, { desc = "Files"})
 map({"n", "v"}, "<leader>g", function() Snacks.picker.grep() end, { desc = "grep"})
@@ -98,6 +104,14 @@ map({ "n", "v" }, "<leader>si", function() Snacks.picker.icons() end, { desc = "
 map({ "n", "v" }, "<leader><space>", function() Snacks.picker.resume() end, { desc = "Last Picker" })
 map({ "n", "v" }, "gs", function() Snacks.picker.lsp_symbols() end, { desc = "Document Symbols" })
 map({ "n", "v" }, "gS", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "Workspace Symbols" })
+
+-- Toggles
+require("which-key").add {
+	{ "<leader>o", group = "Toggle Options" }
+}
+
+Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>ow")
+Snacks.toggle.diagnostics({ name = "Diagnostics" }):map("<leader>ox")
 
 -- Notifier
 vim.api.nvim_create_autocmd("LspProgress", {
@@ -114,3 +128,23 @@ vim.api.nvim_create_autocmd("LspProgress", {
 		})
 	end,
 })
+
+vim.api.nvim_create_user_command(
+  'Notify',
+  function(opts)
+    local message = table.concat(opts.fargs, ' ')
+    if message == '' then
+      message = 'Notify'
+    end
+
+    vim.notify(
+      message,
+      vim.log.levels.INFO,
+      { title = 'Custom Notification' } -- Options, including a title
+    )
+  end,
+  {
+    nargs = '*',          -- Allow zero or more arguments
+    desc = 'Display a custom notification message'
+  }
+)

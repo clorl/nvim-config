@@ -1,5 +1,10 @@
 return {
 	cmd = { "node", vim.fs.normalize(vim.fn.stdpath("config") .. "/lsp/haxe_server.js") },
 	filetypes = { "haxe", "hx" },
-	root_markers = { "common.hxml", "wartales.hxml" }
+	root_markers = { "common.hxml", "wartales.hxml" },
+	settings = {
+		haxe = {
+			executable = "haxe"
+		}
+	}
 }

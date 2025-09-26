@@ -30,14 +30,23 @@ if util.get_os() == "windows" then
 			"lua_ls",
 			"shellcheck",
 		},
-		auto_update = true
+		auto_update = true,
 	}
 end
 
 vim.diagnostic.config({
-  virtual_lines = {
+  virtual_text = {
     current_line = true,
   },
+	virtual_lines = false,
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = "",
+			[vim.diagnostic.severity.WARN] = "",
+			[vim.diagnostic.severity.INFO] = "󰙎",
+			[vim.diagnostic.severity.HINT] = "󰙎",
+		}
+	},
 })
 
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -45,7 +54,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     local client = vim.lsp.get_client_by_id(ev.data.client_id)
     if client:supports_method('textDocument/completion') then
 			vim.opt.completeopt = { 'menu', 'menuone', 'noinsert', 'fuzzy', 'popup' }
-      vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+      -- vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
 		end
 
 		if Snacks ~= nil and Snacks.picker ~= nil then
@@ -70,5 +79,12 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		map({"n", "v"}, "<leader>a", function() vim.lsp.buf.code_action() end, { desc = "Code Actions" })
 		map({"n", "v"}, "<leader>gc", function() vim.lsp.codelens.run() end, { desc = "Codelens" })
 		map({"n", "v"}, "<leader>gC", function() vim.lsp.codelens.refresh() end, { desc = "Refresh Codelens" })
+
+		if client:supports_method('textDocument/formatting') then
+			map({"n", "v"}, "<leader>=", function() vim.lsp.buf.format({bufnr = ev, id = client.id, timeout_ms = 1000 }) end, { desc = "Code Format" })
+		end
+
+		vim.notify("LSP Client Attached: " .. client.config.name, vim.log.levels.INFO)
 	end,
 })
+

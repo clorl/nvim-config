@@ -41,7 +41,7 @@ function _get_os()
 end
 
 function M.get_os()
-  if cached_os_name then
+  if cached_os_name ~= nil and cached_os_name ~= "" then
     return cached_os_name
   end
   local os = _get_os()

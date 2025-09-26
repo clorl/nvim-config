@@ -2,7 +2,17 @@ local function augroup(name)
   return vim.api.nvim_create_augroup("user_" .. name, { clear = true })
 end
 
+vim.api.nvim_create_autocmd('BufEnter', {
+	group = augroup("HandleTextFiles"),
+  pattern = '*.txt, *.log, *.md',
+  callback = function()
+    vim.b.completion = false
+		vim.w.wrap = true
+  end,
+})
+
 vim.api.nvim_create_autocmd("VimEnter", {
+	group = augroup("ExecuteExrc"),
   pattern = "*",
   callback = function(ev)
     local local_config_path = vim.fs.joinpath(vim.fn.getcwd(), ".nvim.lua")
@@ -14,6 +24,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 
 vim.api.nvim_create_autocmd("TermOpen", {
+	group = augroup("SetOptionsForTerminalMode"),
   pattern = "*",
   callback = function()
     vim.wo.number = false
@@ -24,6 +35,7 @@ vim.api.nvim_create_autocmd("TermOpen", {
 })
 
 vim.api.nvim_create_autocmd("BufEnter", {
+	group = augroup("InsertWhenEnteringTerminal"),
   callback = function(args)
     local bufnr = args.buf
     if vim.bo[bufnr].buftype == "terminal" then
@@ -175,3 +187,14 @@ function(opts)
 	vim.bo.modifiable = false
 	vim.wo.wrap = true
 end, {})
+
+vim.api.nvim_create_user_command('LspInfo',
+function(opts)
+		vim.cmd("checkhealth lsp")
+end, {})
+
+vim.api.nvim_create_user_command('Pwd',
+function(opts)
+		print(vim.fn.expand('%:p'))
+end, { desc = "Print buffer directory" })
+
