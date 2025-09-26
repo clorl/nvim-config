@@ -77,8 +77,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		map("n", "K", function() vim.lsp.buf.hover() end, { desc = "Show Documentation" })
 		map("n", "gR", function() vim.lsp.buf.rename() end, { desc = "Rename Symbol"})
 		map({"n", "v"}, "<leader>a", function() vim.lsp.buf.code_action() end, { desc = "Code Actions" })
-		map({"n", "v"}, "<leader>gc", function() vim.lsp.codelens.run() end, { desc = "Codelens" })
-		map({"n", "v"}, "<leader>gC", function() vim.lsp.codelens.refresh() end, { desc = "Refresh Codelens" })
+		map({"n", "v"}, "gl", function() vim.lsp.codelens.run() end, { desc = "Codelens" })
+		map({"n", "v"}, "gL", function() vim.lsp.codelens.refresh() end, { desc = "Refresh Codelens" })
 
 		if client:supports_method('textDocument/formatting') then
 			map({"n", "v"}, "<leader>=", function() vim.lsp.buf.format({bufnr = ev, id = client.id, timeout_ms = 1000 }) end, { desc = "Code Format" })

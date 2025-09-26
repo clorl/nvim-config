@@ -59,9 +59,6 @@ map("v", ">", ">gv")
 map("n", "<", "<<")
 map("n", ">", ">>")
 
--- lazy
-map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
-
 map("n", "[q", vim.cmd.cprev, { desc = "Previous Quickfix" })
 map("n", "]q", vim.cmd.cnext, { desc = "Next Quickfix" })
 

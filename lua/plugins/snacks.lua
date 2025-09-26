@@ -97,7 +97,7 @@ map({"n", "v", "i"}, "<C-x>", function() Snacks.bufdelete() end, { desc = "Delet
 map({"n", "v"}, "<leader>n", function() Snacks.picker.notifications() end, { desc = "Notifications"})
 map({"n", "v"}, "<Tab>", function() Snacks.picker.buffers(pickers.buffers) end, { desc = "Pick Buffers"})
 map({"n", "v"}, "<leader>f", function() Snacks.picker.smart() end, { desc = "Files"})
-map({"n", "v"}, "<leader>g", function() Snacks.picker.grep() end, { desc = "grep"})
+map({"n", "v"}, "<leader>g", function() Snacks.picker.grep() end, { desc = "Find"})
 map({"n", "v"}, "<leader>sc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, { desc = "Config"})
 map({ "n", "v" }, "<leader>sh", function() Snacks.picker.help({ layout = { preset = "dropdown" }}) end, { desc = "Help" })
 map({ "n", "v" }, "<leader>si", function() Snacks.picker.icons() end, { desc = "Icons" })
