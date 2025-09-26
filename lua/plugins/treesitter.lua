@@ -12,6 +12,32 @@ require'nvim-treesitter.configs'.setup {
 	}
 }
 
+require'treesitter-context'.setup {
+	enable = false
+}
+
+local tscontext_toggle = false
+
+Snacks.toggle
+	.new({
+		id = "tscontext",
+		name = "TS Context",
+		get = tscontext_toggle,
+		set = function()
+			tscontext_toggle = not tscontext_toggle
+			if tscontext_toggle then
+				vim.cmd("TSContext enable")
+			else
+				vim.cmd("TSContext disable")
+			end
+		end,
+	})
+	:map("<leader>oc")
+
+vim.keymap.set("n", "[c", function()
+  require("treesitter-context").go_to_context(vim.v.count1)
+end, { silent = true, desc = "TS Context" })
+
 vim.api.nvim_create_autocmd('PackChanged', {
   desc = 'Handle nvim-treesitter updates',
   group = vim.api.nvim_create_augroup('nvim-treesitter-pack-changed-update-handler', { clear = true }),

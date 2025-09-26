@@ -19,6 +19,7 @@ vim.pack.add({
 
 	gh("stevearc/overseer.nvim"),
 	gh("nvim-treesitter/nvim-treesitter"),
+	gh("nvim-treesitter/nvim-treesitter-context"),
 	gh("jdonaldson/vaxe")
 })
 
