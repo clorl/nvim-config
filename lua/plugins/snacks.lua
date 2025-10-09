@@ -5,7 +5,7 @@ local layouts = {}
 -- Custom picker in development
 
 map({ "n", "v" }, "<leader>v", function()
-	require("svn").pickers.commit()
+	require("svn").picker.commit()
 end, { desc = "SVN Commit" })
 
 pickers.buffers = {
