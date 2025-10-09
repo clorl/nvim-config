@@ -65,6 +65,7 @@ os.setup {
 	component_aliases = {
 		default = {
         { "open_output", direction = "dock", on_start = "always"},
+				"on_exit_set_status"
 		}
 	}
 }
@@ -147,3 +148,5 @@ require("lualine").setup {
     lualine_z = {'location'}
   },
 }
+
+require("svn")

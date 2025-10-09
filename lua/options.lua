@@ -62,7 +62,8 @@ opt.foldmethod = "manual"
 opt.foldtext = ""
 opt.exrc = false
 opt.diffopt = {
+	"filler",
 	"horizontal",
-	"iwhite"
+	"iwhiteall"
 }
-vim.opt.winborder = "rounded"
+opt.winborder = "rounded"

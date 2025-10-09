@@ -1,8 +1,15 @@
 local M = {}
 
--- TODO: be able to choose what error types we want globally and on a per-function basis
--- either exceptions with error or error-as-values return values
--- with set_error_mode(function, "exception")
+function M.setup()
+	M.print = _G.print
+	_G.print = function(text)
+		vim.notify(text, vim.log.levels.INFO)
+	end
+
+	_G.log = function(val)
+		M.print(vim.inspect(val))
+	end
+end
 
 local cached_os_name = ""
 

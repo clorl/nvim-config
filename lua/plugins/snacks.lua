@@ -2,6 +2,12 @@ local map = vim.keymap.set
 local pickers = {}
 local layouts = {}
 
+-- Custom picker in development
+
+map({ "n", "v" }, "<leader>v", function()
+	require("svn").pickers.commit()
+end, { desc = "SVN Commit" })
+
 pickers.buffers = {
 				current = false,
 				focus = "list",
