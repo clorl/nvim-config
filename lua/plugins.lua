@@ -155,6 +155,7 @@ vim.g.compile_mode = {
 	baleia_setup = true,
 	bang_expansion = true,
 	default_command = "",
+	input_word_completion = true,
 }
 
 vim.keymap.set({"n", "v"}, "<C-p>", function() vim.cmd("Compile") end, { desc = "Compile"})
