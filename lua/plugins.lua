@@ -20,7 +20,10 @@ vim.pack.add({
 	gh("stevearc/overseer.nvim"),
 	gh("nvim-treesitter/nvim-treesitter"),
 	gh("nvim-treesitter/nvim-treesitter-context"),
-	gh("jdonaldson/vaxe")
+	gh("jdonaldson/vaxe"),
+	gh("nvim-lua/plenary.nvim"),
+	gh("m00qek/baleia.nvim"),
+	gh("ej-shafran/compile-mode.nvim")
 })
 
 -- Essential plugins
@@ -147,3 +150,11 @@ require("lualine").setup {
     lualine_z = {'location'}
   },
 }
+
+vim.g.compile_mode = {
+	baleia_setup = true,
+	bang_expansion = true,
+	default_command = "",
+}
+
+vim.keymap.set({"n", "v"}, "<C-p>", function() vim.cmd("Compile") end, { desc = "Compile"})
