@@ -12,8 +12,8 @@ vim.filetype.add({
 })
 
 vim.lsp.enable("luals")
-vim.lsp.enable("haxedev")
---vim.lsp.enable("haxe")
+vim.lsp.enable("haxe")
+vim.lsp.enable("godot")
 
 -- Mason (for windows only)
 if util.get_os() == "windows" then

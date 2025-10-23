@@ -20,7 +20,10 @@ vim.pack.add({
 	gh("stevearc/overseer.nvim"),
 	gh("nvim-treesitter/nvim-treesitter"),
 	gh("nvim-treesitter/nvim-treesitter-context"),
-	gh("jdonaldson/vaxe")
+	gh("jdonaldson/vaxe"),
+	gh("nvim-lua/plenary.nvim"),
+	gh("m00qek/baleia.nvim"),
+	gh("ej-shafran/compile-mode.nvim")
 })
 
 -- Essential plugins
@@ -65,7 +68,6 @@ os.setup {
 	component_aliases = {
 		default = {
         { "open_output", direction = "dock", on_start = "always"},
-				"on_exit_set_status"
 		}
 	}
 }
@@ -149,4 +151,11 @@ require("lualine").setup {
   },
 }
 
-require("svn")
+vim.g.compile_mode = {
+	baleia_setup = true,
+	bang_expansion = true,
+	default_command = "",
+	input_word_completion = true,
+}
+
+vim.keymap.set({"n", "v"}, "<C-p>", function() vim.cmd("Compile") end, { desc = "Compile"})
