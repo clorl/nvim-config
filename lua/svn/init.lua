@@ -85,11 +85,83 @@ local function svn(cmd)
 	return true, res
 end
 
-M.api = {}
+-- Structured output of svn status
+--- @class svn.api.FileStatus {path: string, status: string, cl?: string}
+--- @field path string File path
+--- @field status string Single character representing the file statuts (see SVN docs)
+--- @field cl? string Name of the changelist the file is in, if found
 
---- @alias svn.api.StatusResult {path: string, status: string, cl?: string}
---- Structured output of svn status
---- TODO Add a way to filter/sort
+-- Takes a list of lines outputted by svn for files status and outputs structured data
+--- @param lines string[]
+--- @return svn.api.FileStatus[]
+local function parse_status(lines)
+	local statuses = "([ ADMRCXI!~%?])"
+	local file_pattern = "%s*" .. statuses .. "%s(.*)\r"
+	local cl_header = "---%sChangelist%s'([^']+)':\r"
+	local cur_cl = nil
+
+	local result = {}
+
+	for _, line in ipairs(lines) do
+		local status, file = line:match(file_pattern)
+		if status ~= nil and file ~= nil then
+			table.insert(result, {
+				path = file,
+				status = status,
+				cl = cur_cl
+			})
+		else
+			local cl_match = line:match(cl_header)
+			if cl_match ~= nil then
+				cur_cl = cl_match
+			end
+		end
+	end
+
+	return result
+end
+
+-- Structured output of svn revision
+--- @class svn.api.Revision {path: string, status: string, cl?: string}
+--- @field rev string
+--- @field user string
+--- @field date string
+--- @field time string
+--- @field timezone string
+--- @field datetime_localized string
+
+--- @param line string Svn revision summary
+--- @return svn.api.Revision?
+local function parse_revision(line)
+	local pattern = table.concat({
+		"(r%d*)", -- Rev number
+		"%s|%s",
+		"([^|]*)", -- User name,
+		"%s|%s",
+		"([%d%-]*)%s", -- Date
+		"([%d:]*)%s", -- Time
+		"(%+%d*)%s", -- Timezone,
+		"(%(.*%))", -- Localized datetime
+		"%s|%s",
+		".*" -- Ignore the rest
+	}, "")
+
+	local m = {line:match(pattern)}
+	if m ~= nil and #m >= 6 then
+		return {
+			rev = m[1],
+			user = m[2],
+			date = m[3],
+			time = m[4],
+			timezone = m[5],
+			datetime_localized = m[6]
+		}
+	end
+
+	return nil
+end
+
+M.api = {}
 
 --- @param opts? table For now does nothing
 --- @return svn.api.StatusResult[]?
@@ -101,33 +173,7 @@ function M.api.status(opts)
 		return
 	end
 
-	local statuses = "[ ADMRCXI!~%?]"
-	local cl_pattern = "---%sChangelist%s'([^']+)':\r"
-
-	local res_list = {}
-	local cl = nil
-
----@diagnostic disable-next-line: param-type-mismatch
-	for i in ipairs(res) do
-		local clmatch = res[i]:match(cl_pattern)
-		if clmatch ~= nil then
-			cl = clmatch
-		end
-
-		local status = res[i]:match(statuses)
-		local path = res[i]:match(statuses .. "%s*(.*)\r")
-		if status ~= nil and path ~= nil then
-			local npath = vim.fs.normalize(path)
-			local obj = {
-				["path"] = npath,
-				["status"] = status,
-				["cl"] = cl,
-			}
-			table.insert(res_list, obj)
-		end
-	end
-
-	return res_list
+	return parse_status(res)
 end
 
 --- @param files string[] list of filepaths to add
@@ -158,6 +204,68 @@ function M.api.commit(files, message, opts)
 		return false
 	end
 	return true
+end
+
+--- @param path? string What path for the log command, either a directory or a file
+--- @param opts? {limit?: integer}
+--- @return any? result
+function M.api.log(path, opts)
+	opts = opts or {}
+
+	local args = {}
+	if path ~= nil then
+		table.insert(args, path)
+	end
+
+	if opts.limit ~= nil then
+		table.insert(args, "-l")
+		table.insert(args, "" .. opts.limit)
+	end
+
+	local success, res = svn("log -v " .. table.concat(args, " "))
+	if not success then
+		vim.notify(res, vim.log.levels.ERROR)
+		return nil
+	end
+
+	local idx = 1
+	local output = {}
+	while idx < #res do
+		local header = res[idx+1]
+		local changed_files_start = res[idx+3]
+
+		-- Look for newline
+		local changed_files = {}
+		local j = idx + 3
+		local chg_file_line = res[j]
+		while chg_file_line ~= "\r" do
+			table.insert(changed_files, chg_file_line)
+			j = j + 1
+			chg_file_line = res[j]
+		end
+
+		-- Look for delimiter
+		local k = j + 1
+		local mess = {}
+		local mess_line = res[k]
+		while string.gsub(mess_line, "%-*", "") ~= "\r" do
+			table.insert(mess, mess_line)
+			k = k + 1
+			mess_line = res[k]
+		end
+
+		table.insert(output, {
+			header = parse_revision(header),
+			changed_files = parse_status(changed_files),
+			message = mess
+		})
+
+		-- Assign delimiter index
+		idx = k
+	end
+
+	log(output)
+
 end
 
 
@@ -275,7 +383,7 @@ end
 --- @param opts? svn.picker.Config
 function M.picker.commit(opts)
 	--- @class SvnPicker
-	local base = M.pickerSvnPicker.new(opts)
+	local base = M.picker.SvnPicker.new(opts)
 	if base == nil then
 		return
 	end
@@ -342,5 +450,20 @@ function M.picker.commit(opts)
 
 	return Snacks.picker.pick(base)
 end
+
+--- @param file? string If set, will show previous versions of the current file, otherwise cwd
+--- @param limit? integer Max number of items to show
+--- @param opts? svn.picker.Config Unused
+function M.picker.log(file, limit, opts)
+	--- @class SvnPicker
+	local base = M.pickerSvnPicker.new(opts)
+	if base == nil then
+		return
+	end
+end
+
+vim.api.nvim_create_user_command("Svn", function()
+  log(M.api.log("res/data.cdb", { limit = 10 }))
+end, {})
 
 return M

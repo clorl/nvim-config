@@ -8,6 +8,10 @@ map({ "n", "v" }, "<leader>v", function()
 	require("svn").picker.commit()
 end, { desc = "SVN Commit" })
 
+map({ "n", "v" }, "<leader>h", function()
+	require("svn").picker.log(vim.fn.expand("%p"))
+end, { desc = "SVN History" })
+
 pickers.buffers = {
 				current = false,
 				focus = "list",
