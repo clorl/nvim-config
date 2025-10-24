@@ -12,7 +12,7 @@ vim.filetype.add({
 })
 
 vim.lsp.enable("luals")
-vim.lsp.enable("haxedev")
+vim.lsp.enable("haxe-dev")
 -- vim.lsp.enable("haxe")
 vim.lsp.enable("godot")
 
