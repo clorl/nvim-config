@@ -57,6 +57,7 @@ require("plugins.snacks")
 -- Other plugins
 
 require("plugins.treesitter")
+require("plugins.overseer")
 
 local wk = require("which-key")
 wk.setup {
@@ -72,18 +73,6 @@ require("trouble").setup {}
 map({ "n", "v" }, "<leader>x", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Diagnostics"})
 map({ "n", "v" }, "<leader>X", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", { desc = "Diagnostics (Buffer)"})
 map({ "n", "v" }, "<leader>c", "<cmd>Trouble qflist toggle<cr>", { desc = "Quickfix List"})
-
-local os = require("overseer")
-os.setup {
-	component_aliases = {
-		default = {
-        { "open_output", direction = "dock", on_start = "always"},
-		}
-	}
-}
-map({ "n", "v" }, "<F5>", "<cmd>OverseerRun<cr>", { desc = "Run"})
-map({ "n", "v" }, "<S-F5>", "<cmd>OverseerQuickAction<cr>", { desc = "Run Quick Action"})
-map({ "n", "v" }, "<C-F5>", "<cmd>OverseerToggle<cr>", { desc = "Toggle Run Panel"})
 
 -- Completion
 
@@ -168,4 +157,3 @@ vim.g.compile_mode = {
 	input_word_completion = true,
 }
 
-vim.keymap.set({"n", "v"}, "<C-p>", function() vim.cmd("Compile") end, { desc = "Compile"})
