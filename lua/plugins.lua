@@ -10,7 +10,7 @@ vim.pack.add({
 	gh("nvim-lualine/lualine.nvim"),
 	gh("stevearc/oil.nvim"),
 	gh("folke/which-key.nvim"),
-	gh("folke/trouble.nvim"),
+	--gh("folke/trouble.nvim"),
 	gh("folke/snacks.nvim"),
 
 	gh("Saghen/blink.cmp"),
@@ -69,10 +69,6 @@ wk.add {
 
 require("mini.icons").setup {}
 
-require("trouble").setup {}
-map({ "n", "v" }, "<leader>x", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Diagnostics"})
-map({ "n", "v" }, "<leader>X", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", { desc = "Diagnostics (Buffer)"})
-map({ "n", "v" }, "<leader>c", "<cmd>Trouble qflist toggle<cr>", { desc = "Quickfix List"})
 
 -- Completion
 
