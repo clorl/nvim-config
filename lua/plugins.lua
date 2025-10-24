@@ -38,8 +38,18 @@ require("oil").setup {
 		["<s-h>"] = "actions.toggle_hidden",
 		["<s-bs>"] = "actions.open_cwd",
 		["<s-enter>"] = "actions.cd",
-		["<c-p>"] = ""
-	}
+		["g?"] = { "actions.show_help", mode = "n" },
+		["<CR>"] = "actions.select",
+		["<C-s>"] = { "actions.select", opts = { vertical = true } },
+		["<C-h>"] = { "actions.select", opts = { horizontal = true } },
+		["<C-t>"] = { "actions.select", opts = { tab = true } },
+		["<C-l>"] = "actions.refresh",
+		["gs"] = { "actions.change_sort", mode = "n" },
+		["gx"] = "actions.open_external",
+		["g."] = { "actions.toggle_hidden", mode = "n" },
+		["g\\"] = { "actions.toggle_trash", mode = "n" },
+	},
+	use_default_keymaps = false
 }
 map("n", "<bs>", "<cmd>Oil<cr>", { desc = "File Explorer" })
 require("plugins.snacks")
