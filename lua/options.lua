@@ -71,3 +71,9 @@ opt.diffopt = {
 	"iwhiteall"
 }
 opt.winborder = "rounded"
+
+local errfmt = {
+	"%+Gg",
+	"%f:%l:%c"
+}
+opt.errorformat = opt.errorformat .. table.concat(errfmt)

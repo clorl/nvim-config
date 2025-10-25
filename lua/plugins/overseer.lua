@@ -34,7 +34,7 @@ end, {
   desc = "Compile",
   nargs = "*",
 	bang= true,
-	complete = "command"
+	complete = "shellcmdline"
 })
 
 vim.keymap.set({"n","v"}, "<C-p>", function()

@@ -22,6 +22,8 @@ vim.pack.add({
 	gh("nvim-treesitter/nvim-treesitter-context"),
 	gh("jdonaldson/vaxe"),
 	gh("nvim-lua/plenary.nvim"),
+
+	-- May be removed later
 	gh("m00qek/baleia.nvim"),
 	gh("ej-shafran/compile-mode.nvim")
 })
